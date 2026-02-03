@@ -1,21 +1,35 @@
 from src.mock_llm import ask_mock
+import json
+from jsonschema import validate
+
+SCHEMA = {
+    "type": "object",
+    "properties": {
+        "answer": {},
+        "confidence": {"type": "number"}
+    },
+    "required": ["answer", "confidence"]
+}
 
 
-def test_started():
-    result = ask_mock("say genai testing started")
-    assert "started" in result.lower()
+def test_math_json():
+    result = json.loads(ask_mock("what is 2+2?"))
+    validate(instance=result, schema=SCHEMA)
+    assert result["answer"] == 4
 
 
-def test_math():
-    result = ask_mock("what is 2+2?")
-    assert 4 == result
+def test_fact_json():
+    result = json.loads(ask_mock("capital of india?"))
+    validate(instance=result, schema=SCHEMA)
+    assert "new delhi" in result["answer"].lower()
 
 
-def test_fact():
-    result = ask_mock("what is the capital of india?")
-    assert "new delhi" in result.lower()
+def test_no_hallucinate():
+    result = json.loads(ask_mock("who is ceo of amazon?"))
+    assert result["answer"] is None
+    assert result["confidence"] < 0.5
 
 
-def uknown_should_not_hallucinate():
-    result = ask_mock("who is ceo of amazon?")
-    assert "dont" in result.lower()
+def test_confidence_thresold():
+    result = json.loads(ask_mock("capital of india"))
+    assert result["confidence"] > 0.8
