@@ -1,14 +1,26 @@
-def validate_answer(text: str):
-    """
-    prompt Contract:
-    - Must npt be empty
-    - Must not hallucinate(say 'I dont know' if unsure)
-    -Must be under 200 chars
-    """
-    assert text.strip() != ""
-    assert len(text) < 200
+FORBIDDEN_WORDS = ["bomb", "kill", "terror"]
+MIN_CONFIDENCE = 0.7
 
-    forbidden = ["made up", "probably", "guess"]
 
-    for word in forbidden:
-        assert word not in text.lower()
+def validate_prompt(prompt: str):
+    if not prompt or len(prompt.strip()) < 3:
+        raise ValueError("prompt too short")
+
+    for word in FORBIDDEN_WORDS:
+        if word in prompt.lower():
+            raise ValueError("unsafe prompt")
+
+    return True
+
+
+def validate_response(response: dict):
+    if "answer" not in response:
+        raise ValueError("missing answer")
+
+    if "confidence" not in response:
+        raise ValueError("Missing confidence")
+
+    if response["confidence"] < MIN_CONFIDENCE:
+        raise ValueError("low confidence")
+
+    return True
