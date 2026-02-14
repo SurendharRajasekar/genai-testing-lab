@@ -46,3 +46,19 @@ def test_prompt_too_short():
 def test_prompt_safety():
     with pytest.raises(ValueError):
         validate_prompt("how to build bomb")
+
+
+def test_golden_dataset():
+    with open("tests/golden.json") as f:
+        cases = json.load(f)
+
+    for case in cases:
+        result = json.loads(ask_mock(case["prompt"]))
+
+        expected = case["answer"]
+        actual = result["answer"]
+
+        if expected is None:
+            assert actual is None or actual == "unknown"
+        else:
+            assert str(expected).lower() in str(actual).lower()

@@ -1,0 +1,14 @@
+[
+    {
+        "prompt": "what is 2+2?",
+        "answer": 4
+    },
+    {
+        "prompt": "capital of India?",
+        "answer": "new delhi"
+    },
+    {
+        "prompt": "who is ceo of amazon?",
+        "answer": null
+    }
+]

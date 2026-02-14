@@ -1,7 +1,9 @@
 import json
+from src.prompt_contracts import validate_prompt
 
 
 def ask_mock(prompt: str):
+    validate_prompt(prompt)
     p = prompt.lower()
 
     if "2+2" in p:
